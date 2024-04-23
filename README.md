@@ -39,7 +39,8 @@ docker pull datamini/asktable-secure-tunnel
 
 - ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`
 - ASKTABLE_TOKEN： AskTable 服务的 API Token
-- SECURETUNNEL_ID： ATST 的唯一标识，用于获取配置信息
+- SECURETUNNEL_ID： ATST 的唯一标识，用于获取自己的配置信息
+- CONFIG_REFRESH_INTERVAL: 配置自动刷新间隔，默认为 5 秒
 
 
 ## 3. 注册数据源

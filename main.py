@@ -74,9 +74,19 @@ def generate_config_toml(config, config_path):
         logging.error(f"Failed to write to {config_path}: {e}")
 
 
-def monitor_config_and_reload_frpc(st_id, config_path, previous_config, interval=5):
+def monitor_config_and_reload_frpc(
+        st_id, config_path, previous_config, interval=os.environ.get("CONFIG_REFRESH_INTERVAL", 10)):
     while True:
-        current_config = generate_config_dict(st_id)
+        try:
+            current_config = generate_config_dict(st_id)
+        except asktable.exceptions.ServerConnectionError:
+            logging.error("Failed to connect to the server. Retrying in 10 seconds.")
+            time.sleep(10)
+            continue
+        except (asktable.exceptions.UnknownServerError, asktable.exceptions.UnknownError) as e:
+            logging.error(f"Failed to get the configuration: {e}. Retrying in 10 seconds.")
+            time.sleep(10)
+            continue
         if current_config != previous_config:
             logging.info("Configuration has changed, updating and reloading frpc.")
             generate_config_toml(current_config, config_path)
