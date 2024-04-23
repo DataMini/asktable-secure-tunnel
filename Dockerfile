@@ -30,5 +30,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制Python脚本和其他必要文件
 COPY main.py /app/main.py
 
-# 默认命令
-CMD ["python", "main.py"]
+# 设置入口点
+ENTRYPOINT ["python", "main.py"]
+
+# 设置默认的CMD
+CMD []

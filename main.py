@@ -1,16 +1,20 @@
 import os
 import sys
 import subprocess
+import logging
+import asktable.exceptions
 import toml
 import time
 import threading
 from asktable import AskTable
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def create_id(token):
     at = AskTable(token=token)
     st = at.securetunnels.create()
-    print(f"Created Secure Tunnel ID: {st.id}")
+    logging.info(f"Created Secure Tunnel ID: {st.id}")
     return st.id
 
 
@@ -59,16 +63,16 @@ def generate_config_toml(config, config_path):
     try:
         with open(config_path, 'w') as file:
             toml.dump(config, file)
-        print(f"Configuration file saved to {config_path}")
+        logging.info(f"Configuration file saved to {config_path}")
     except IOError as e:
-        print(f"Failed to write to {config_path}: {e}")
+        logging.error(f"Failed to write to {config_path}: {e}")
 
 
 def monitor_config_and_reload_frpc(token, st_id, config_path, previous_config, interval=5):
     while True:
         current_config = generate_config_dict(token, st_id)
         if current_config != previous_config:
-            print("Configuration has changed, updating and reloading frpc.")
+            logging.info("Configuration has changed, updating and reloading frpc.")
             generate_config_toml(current_config, config_path)
             subprocess.run(["/usr/bin/frpc", "reload", "-c", config_path])
             previous_config = current_config
@@ -76,12 +80,12 @@ def monitor_config_and_reload_frpc(token, st_id, config_path, previous_config, i
 
 
 def start_atst(token, st_id):
-    print("Starting ATST with Secure Tunnel ID:", st_id)
+    logging.info("Starting ATST with Secure Tunnel ID:", st_id)
     config_path = "/etc/frpc.toml"
     current_config = generate_config_dict(token, st_id)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
-    print(f"Starting monitoring thread for {config_path}")
+    logging.info(f"Starting monitoring thread for {config_path}")
     threading.Thread(
         target=monitor_config_and_reload_frpc,
         args=(token, st_id, config_path, current_config),
@@ -95,7 +99,7 @@ def start_atst(token, st_id):
 def main():
     token = os.getenv('ASKTABLE_TOKEN')
     if not token:
-        print("Missing ASKTABLE_TOKEN")
+        logging.error("Missing ASKTABLE_TOKEN")
         sys.exit(1)
 
     if len(sys.argv) > 1 and sys.argv[1] == "create-id":
@@ -104,10 +108,13 @@ def main():
         st_id = os.getenv('SECURETUNNEL_ID')
 
         if st_id:
-            print(f"Using provided Secure Tunnel ID({st_id}) for starting ATST.")
-            start_atst(token, st_id)
+            logging.info(f"Using provided Secure Tunnel ID({st_id}) for starting ATST.")
+            try:
+                start_atst(token, st_id)
+            except asktable.exceptions.SecureTunnelNotFound:
+                logging.error(f"Secure Tunnel ID({st_id}) not found. Exiting.")
         else:
-            print(f"Secure Tunnel ID not provided. Creating a new one.")
+            logging.info(f"Secure Tunnel ID not provided. Creating a new one.")
             st_id = create_id(token)
             start_atst(token, st_id)
 
