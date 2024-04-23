@@ -30,7 +30,8 @@ def generate_config_dict(st_id):
     config = {
         "common": {
             "server_addr": st.atst_server_host,
-            "server_port": st.atst_server_port
+            "server_port": st.atst_server_port,
+            "webServer.port": 7703,
         },
         "proxies": []
     }
@@ -51,18 +52,19 @@ def generate_config_toml(config, config_path):
     [common]
     server_addr = sh0.dminfra.cn
     server_port = 7000
+    webServer.port = 7703
 
     [[proxies]]
     name = "mysql-tcp1"
     type = "tcp"
-    local_ip = "private.mysql.dminfra.cn"
+    local_ip = "10.1.1.3"
     local_port = 3306
     remote_port = 6000
 
     [[proxies]]
     name = "mysql-tcp2"
     type = "tcp"
-    local_ip = "private.mysql.dminfra.cn"
+    local_ip = "10.2.2.3"
     local_port = 3306
     remote_port = 6002
     """
