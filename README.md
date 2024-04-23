@@ -62,7 +62,7 @@ at = AskTable()
 at.datasources.register(
     type='mysql', 
     access_config={
-        'host': 'xxx', 'port': 3306, 'user': 'xx', 'password': 'xx', 
+        'host': '10.1.2.3', 'port': 3306, 'user': 'xx', 'password': 'xx', 
         'securetunnel_id': 'xxx'
     }
 )
