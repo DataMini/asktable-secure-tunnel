@@ -86,7 +86,7 @@ def monitor_config_and_reload_frpc(st_id, config_path, previous_config, interval
 
 
 def start_atst(st_id):
-    logging.info("Starting ATST with Secure Tunnel ID:", st_id)
+    logging.info(f"Starting ATST with Secure Tunnel ID: {st_id}")
     config_path = "/etc/frpc.toml"
     current_config = generate_config_dict(st_id)
     generate_config_toml(current_config, config_path)
