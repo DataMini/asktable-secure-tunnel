@@ -10,16 +10,22 @@ from asktable import AskTable
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+at_api_url = os.getenv('ASKTABLE_API_URL', 'https://api.asktable.com')
+at_token = os.getenv('ASKTABLE_TOKEN')
+if not at_token:
+    logging.error("Missing ASKTABLE_TOKEN")
+    sys.exit(1)
 
-def create_id(token):
-    at = AskTable(token=token)
+at = AskTable(token=at_token, api_url=at_api_url)
+
+
+def create_id():
     st = at.securetunnels.create()
     logging.info(f"Created Secure Tunnel ID: {st.id}")
     return st.id
 
 
-def generate_config_dict(token, st_id):
-    at = AskTable(token=token)
+def generate_config_dict(st_id):
     st = at.securetunnels.get(st_id)
     config = {
         "common": {
@@ -68,9 +74,9 @@ def generate_config_toml(config, config_path):
         logging.error(f"Failed to write to {config_path}: {e}")
 
 
-def monitor_config_and_reload_frpc(token, st_id, config_path, previous_config, interval=5):
+def monitor_config_and_reload_frpc(st_id, config_path, previous_config, interval=5):
     while True:
-        current_config = generate_config_dict(token, st_id)
+        current_config = generate_config_dict(st_id)
         if current_config != previous_config:
             logging.info("Configuration has changed, updating and reloading frpc.")
             generate_config_toml(current_config, config_path)
@@ -79,16 +85,16 @@ def monitor_config_and_reload_frpc(token, st_id, config_path, previous_config, i
         time.sleep(interval)
 
 
-def start_atst(token, st_id):
+def start_atst(st_id):
     logging.info("Starting ATST with Secure Tunnel ID:", st_id)
     config_path = "/etc/frpc.toml"
-    current_config = generate_config_dict(token, st_id)
+    current_config = generate_config_dict(st_id)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
     logging.info(f"Starting monitoring thread for {config_path}")
     threading.Thread(
         target=monitor_config_and_reload_frpc,
-        args=(token, st_id, config_path, current_config),
+        args=(st_id, config_path, current_config),
         daemon=True
     ).start()
     # Start frpc as the main process and redirect its output
@@ -97,26 +103,21 @@ def start_atst(token, st_id):
 
 
 def main():
-    token = os.getenv('ASKTABLE_TOKEN')
-    if not token:
-        logging.error("Missing ASKTABLE_TOKEN")
-        sys.exit(1)
-
     if len(sys.argv) > 1 and sys.argv[1] == "create-id":
-        create_id(token)
+        create_id()
     else:
         st_id = os.getenv('SECURETUNNEL_ID')
 
         if st_id:
             logging.info(f"Using provided Secure Tunnel ID({st_id}) for starting ATST.")
             try:
-                start_atst(token, st_id)
+                start_atst(st_id)
             except asktable.exceptions.SecureTunnelNotFound:
                 logging.error(f"Secure Tunnel ID({st_id}) not found. Exiting.")
         else:
             logging.info(f"Secure Tunnel ID not provided. Creating a new one.")
-            st_id = create_id(token)
-            start_atst(token, st_id)
+            st_id = create_id()
+            start_atst(st_id)
 
 
 if __name__ == "__main__":

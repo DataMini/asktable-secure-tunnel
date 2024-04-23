@@ -37,6 +37,12 @@ docker pull datamini/asktable-secure-tunnel
 
 启动后，ATST 将自动从 AskTable 获取配置信息并开始运行。 ATST 会每 5 秒检查一次配置更新，因此新增的数据源连接会自动生效，无需重启服务。
 
+### 2.3 所有环境变量
+
+- ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`
+- ASKTABLE_TOKEN： AskTable 服务的 API Token
+- SECURETUNNEL_ID： ATST 的唯一标识，用于获取配置信息
+
 
 ## 3. 注册数据源
 
