@@ -50,7 +50,7 @@ def generate_config_dict(st_id):
 def generate_config_toml(config, config_path):
     """
     [common]
-    server_addr = sh0.dminfra.cn
+    server_addr = 10.10.10.10
     server_port = 7000
     webServer.port = 7703
 

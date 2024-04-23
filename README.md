@@ -1,60 +1,53 @@
 # AskTable Secure Tunnel (ATST) 用户使用手册
 
 ## 1. 概述
-AskTable Secure Tunnel (ATST) 是一项服务，允许安全地将外部的 AskTable 服务通过安全隧道与内部的本地数据库进行通信。这项服务确保数据源与 AskTable 之间的连接既安全又高效，非常适合需要保证数据通信安全性的企业环境。
+AskTable Secure Tunnel (ATST) 是 AskTable 开发的一个安全工具，允许 AskTable 服务通过安全隧道与内部的本地数据库进行通信。这项服务确保数据源与 AskTable 之间的连接既安全又高效，非常适合需要保证数据通信安全性的企业环境。
 
-## 2. 介绍
+您可以参考本文档，在您的私有网络中部署并运行 ATST。
 
-利用ATST，用户在向AskTable注册数据源时可以指定一个自己的 `securetunnel_id`。这个标识符使AskTable能够明确识别并通过指定的安全隧道（ATST）访问内部数据源。这一特性不仅简化了数据源的管理过程，同时也增强了数据访问的安全性。
+## 2. 开始使用 ATST
 
-该`securetunnel_id`是用户在运行 ATST 时自动生成，请保存下来，并作为启动 ATST 服务的唯一凭证。
+选择一台可以访问 [https://api.asktable.com/](https://api.asktable.com/)，并且可以访问您的数据源的服务器，安装 Docker，并按照以下步骤操作：
 
-请不要关闭 ATST 服务，否则 AskTable 将无法访问您的数据源。如果您需要更换 ATST 所在的服务器，只需在新服务器上重新启动 ATST 服务，并使用相同的 `securetunnel_id` 即可。
+### 2.1 下载 ATST 镜像
 
+您可以通过以下命令下载 ATST Docker 镜像
 
-## 3. 开始使用 ATST
-
-### 3.1 下载镜像
 ```bash
 docker pull datamini/asktable-secure-tunnel
 ```
 
-### 3.2 使用方法
+### 2.2 使用方法
 
-首先，您需要一个唯一的 `Secure Tunnel ID(securetunnel_id)`。这将用于标识并启动您的 ATST。
-然后，在您的私有网络中，启动 ATST 服务。
+启动 ATST 服务前，您需要一个唯一的 `Secure Tunnel ID(securetunnel_id)`来标识和启动您的 ATST：
 
-获取 ATST_ID 和 启动 ATST 均使用同一个 Docker 镜像，具体方法如下：
-
-1. 如果指定了`create-id`命令，则只创建一个`securetunnel_id`。
-
+1. 创建 `securetunnel_id`：
     ```bash
     docker run --rm -e ASKTABLE_TOKEN=<asktable_token> datamini/asktable-secure-tunnel create-id
     ```
   此命令将返回一个 `securetunnel_id`，请妥善保存此 ID，因为它是获取您当前 ATST 配置信息的唯一凭证。
 
-2. 如果没有指定任何命令（即默认行为），则：
-  - 如果环境变量中包含`securetunnel_id`，使用该ID启动。
-  - 如果环境变量中不包含`securetunnel_id`，自动创建一个ID，然后使用这个ID启动。
-
+2. 启动 ATST 服务：
     ```bash
     docker run  -e ASKTABLE_TOKEN=<asktable_token> \
         [-e SECURETUNNEL_ID=<securetunnel_id>] datamini/asktable-secure-tunnel
     ```
+  - 如果环境变量中包含`securetunnel_id`，使用该ID启动。（推荐）
+  - 如果环境变量中不包含`securetunnel_id`，自动创建一个ID并启动。（不推荐，因为每次启动都会生成一个新的ID，绑定原ID的数据源将无法访问）
 
-启动后，ATST 将自动从 AskTable 获取配置信息并开始运行。 并且会自动更新。一个ATST 可以共享给多个DataSource使用。
+启动后，ATST 将自动从 AskTable 获取配置信息并开始运行，同时定期自动更新。一个 ATST 可以共享给多个数据源使用。
 
-### 3.3 所有环境变量
+### 2.3 环境变量配置
 
 - ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`
 - ASKTABLE_TOKEN： AskTable 服务的 API Token，从[AskTable网站](https://asktable.com)获取。
-- SECURETUNNEL_ID： ATST 的唯一标识，用于获取自己的配置信息
-- CONFIG_REFRESH_INTERVAL: 配置自动刷新间隔，默认为 10 秒
+- SECURETUNNEL_ID： ATST 的唯一标识。
+- CONFIG_REFRESH_INTERVAL: 配置自动刷新间隔，默认为 10 秒。
 
 
-## 4. 注册数据源
+## 3. 注册数据源
 
-要让 AskTable 通过 ATST 访问您的内部数据源，您只需使用如下命令注册数据源：
+要让 AskTable 通过 ATST 访问您的内部数据源，您需要注册数据源并指定 `securetunnel_id`：
 
 ```python
 from asktable import AskTable
@@ -67,13 +60,19 @@ at.datasources.register(
     }
 )
 ```
-在 access_config 配置信息中增加 `securetunnel_id` 字段，将其设置为您的 `securetunnel_id`。这样，AskTable 将通过 ATST 访问您的数据源。
+在 access_config 配置信息中增加 `securetunnel_id` 字段，将其设置为您的 `securetunnel_id`，从而使 AskTable 能够通过 ATST 访问您的数据源。更多信息请参考：[AskTable Python Library](https://pypi.org/project/asktable/).
 
-详见：https://pypi.org/project/asktable/
+## 4. 维护和管理 ATST 服务【非常重要】
+
+请不要随意关闭 ATST 服务，否则 AskTable 将无法访问您的数据源。
+
+如果需要重启、升级或迁移 ATST 服务，请确保`securetunnel_id`不变，以保证数据源的正常访问。
+
+为了保证`securetunnel_id`的安全性，我们建议您在启动 ATST 服务时使用环境变量来传递`securetunnel_id`，而不是让 ATST 自动生成。
 
 
 ## 5. 高级功能
-您可以通过Python SDK 或命令行工具 `asktable` 来管理 ATST 服务。详见：https://pypi.org/project/asktable/
+您可以通过Python SDK 或命令行工具 `asktable` 来获取 ATST 信息。详见：https://pypi.org/project/asktable/
 
 
 
