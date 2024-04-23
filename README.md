@@ -28,11 +28,9 @@ docker pull datamini/asktable-secure-tunnel
   - 如果环境变量中包含`securetunnel_id`，使用该ID启动。
   - 如果环境变量中不包含`securetunnel_id`，自动创建一个ID，然后使用这个ID启动。
 
-
     ```bash
-    docker run datamini/asktable-secure-tunnel \
-        -e ASKTABLE_TOKEN=<asktable_token> \
-        [-e SECURETUNNEL_ID=<securetunnel_id>]
+    docker run  -e ASKTABLE_TOKEN=<asktable_token> \
+        [-e SECURETUNNEL_ID=<securetunnel_id>] datamini/asktable-secure-tunnel
     ```
 
 启动后，ATST 将自动从 AskTable 获取配置信息并开始运行。 ATST 会每 5 秒检查一次配置更新，因此新增的数据源连接会自动生效，无需重启服务。
