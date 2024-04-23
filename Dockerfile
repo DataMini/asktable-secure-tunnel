@@ -12,11 +12,11 @@ ARG TARGETPLATFORM
 
 RUN case "${TARGETPLATFORM}" in \
     "linux/amd64") \
-      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPS_VERSION}/frp_${FRPS_VERSION}_linux_amd64.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
+      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPC_VERSION}/frp_${FRPC_VERSION}_linux_amd64.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
     "linux/arm64") \
-      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPS_VERSION}/frp_${FRPS_VERSION}_linux_arm64.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
+      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPC_VERSION}/frp_${FRPC_VERSION}_linux_arm64.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
     "linux/arm/v7") \
-      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPS_VERSION}/frp_${FRPS_VERSION}_linux_arm.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
+      curl -sSL "https://github.com/fatedier/frp/releases/download/v${FRPC_VERSION}/frp_${FRPC_VERSION}_linux_arm.tar.gz" | tar xz --strip-components=1 -C /usr/bin;; \
     *) echo "Unsupported arch ${TARGETPLATFORM}" && exit 1 ;; \
     esac
 
