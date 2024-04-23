@@ -2,10 +2,10 @@ version: '2'
 
 services:
   asktable_secure_tunnel:
-    image: datamini/asktable-secure-tunnel:1.2
+    image: datamini/asktable-secure-tunnel
     container_name: asktable_secure_tunnel
     restart: always
     environment:
-      ASKTABLE_TOKEN: admin
-      SECURETUNNEL_ID: ATST_ID
+      ASKTABLE_TOKEN: asktable_token
+      SECURETUNNEL_ID: securetunnel_id
 

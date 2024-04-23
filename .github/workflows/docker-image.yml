@@ -31,5 +31,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: datamini/asktable-secure-tunnel:${{ env.VERSION }}
+          tags:
+            datamini/asktable-secure-tunnel:${{ env.VERSION }},datamini/asktable-secure-tunnel:latest
           platforms: linux/amd64,linux/arm64,linux/arm/v7
