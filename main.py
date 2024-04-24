@@ -104,7 +104,11 @@ def monitor_config_and_reload_frpc(
 def start_atst(st_id):
     logging.info(f"Starting ATST with Secure Tunnel ID: {st_id}")
     config_path = "/etc/frpc.toml"
-    current_config = generate_config_and_send_client_info(st_id)
+    try:
+        current_config = generate_config_and_send_client_info(st_id)
+    except asktable.exceptions.ServerConnectionError:
+        logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.")
+        sys.exit(1)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
     logging.info(f"Starting monitoring thread for {config_path}")
