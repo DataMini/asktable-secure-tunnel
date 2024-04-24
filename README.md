@@ -5,6 +5,9 @@ AskTable Secure Tunnel (ATST) 是 AskTable 开发的一个安全工具，允许 
 
 您可以参考本文档，在您的私有网络中部署并运行 ATST。
 
+![network-arch.png](network-arch.png)
+
+
 ## 2. 开始使用 ATST
 
 选择一台可以访问 [https://api.asktable.com/](https://api.asktable.com/)，并且可以访问您的数据源的服务器，安装 Docker，并按照以下步骤操作：
