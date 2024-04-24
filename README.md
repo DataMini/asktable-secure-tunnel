@@ -1,7 +1,7 @@
 # AskTable Secure Tunnel (ATST) 用户使用手册
 
 ## 1. 概述
-AskTable Secure Tunnel (ATST) 是 AskTable 开发的一个安全工具，允许 AskTable 服务通过安全隧道与内部的本地数据库进行通信。这项服务确保数据源与 AskTable 之间的连接既安全又高效，非常适合需要保证数据通信安全性的企业环境。
+AskTable Secure Tunnel (ATST) 是 [AskTable](https://asktable.com) 团队开发的一个安全工具，允许 AskTable 服务通过安全隧道与内部的本地数据库进行通信。这项服务确保数据源与 AskTable 之间的连接既安全又高效，非常适合需要保证数据通信安全性的企业环境。详见：[Github](https://github.com/DataMini/asktable-secure-tunnel)
 
 您可以参考本文档，在您的私有网络中部署并运行 ATST。
 
