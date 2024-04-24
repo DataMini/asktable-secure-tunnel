@@ -7,6 +7,7 @@ import toml
 import time
 import threading
 from asktable import AskTable
+from .system import gather_system_info
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -25,7 +26,7 @@ def create_id():
     return st.id
 
 
-def generate_config_dict(st_id):
+def generate_config_and_send_client_info(st_id):
     st = at.securetunnels.get(st_id)
     config = {
         "common": {
@@ -44,6 +45,9 @@ def generate_config_dict(st_id):
             "remote_port": link.proxy_port
         }
         config["proxies"].append(proxy)
+
+    info = gather_system_info()
+    st.update(name=info['hostname'], client_info=info)
     return config
 
 
@@ -80,7 +84,7 @@ def monitor_config_and_reload_frpc(
         st_id, config_path, previous_config, interval=os.environ.get("CONFIG_REFRESH_INTERVAL", 10)):
     while True:
         try:
-            current_config = generate_config_dict(st_id)
+            current_config = generate_config_and_send_client_info(st_id)
         except asktable.exceptions.ServerConnectionError:
             logging.error("Failed to connect to the server. Retrying in 10 seconds.")
             time.sleep(10)
@@ -100,7 +104,7 @@ def monitor_config_and_reload_frpc(
 def start_atst(st_id):
     logging.info(f"Starting ATST with Secure Tunnel ID: {st_id}")
     config_path = "/etc/frpc.toml"
-    current_config = generate_config_dict(st_id)
+    current_config = generate_config_and_send_client_info(st_id)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
     logging.info(f"Starting monitoring thread for {config_path}")

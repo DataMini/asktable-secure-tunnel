@@ -50,10 +50,9 @@ docker pull datamini/asktable-secure-tunnel
 
 ### 2.3 环境变量配置
 
-- ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`
+- ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`，无需更改。
 - ASKTABLE_TOKEN： AskTable 服务的 API Token，从[AskTable网站](https://asktable.com)获取。
 - SECURETUNNEL_ID： ATST 的唯一标识。
-- CONFIG_REFRESH_INTERVAL: 配置自动刷新间隔，默认为 10 秒。
 
 
 ## 3. 注册数据源
@@ -92,6 +91,17 @@ at.datasources.register(
 
 ## 7. 故障排除
 若 ATST 服务遇到任何问题，首先请检查 `asktable_token`和`securetunnel_id` 是否正确无误，确保您的网络环境允许 ATST 正常访问您的数据源以及 AskTable 服务。如有更多技术问题，请联系 AskTable 技术支持。
+
+## 8. FAQ
+
+### 8.1 是否可以同时运行多个 ATST 服务？
+是的，您可以同时运行多个 ATST 服务，每个服务使用不同的 `securetunnel_id`。
+
+如果使用相同的 `securetunnel_id` 启动，则会报错如下：
+
+```
+start error: proxy [[proxies]] already exists
+```
 
 # 感谢
 AskTable Secure Tunnel 使用了 [frp](https://github.com/fatedier/frp)，一个高性能的反向代理服务。感谢 frp 项目组的贡献。
