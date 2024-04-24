@@ -29,6 +29,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制Python脚本和其他必要文件
 COPY main.py /app/main.py
+COPY system.py /app/system.py
+
 
 # 设置入口点
 ENTRYPOINT ["python", "main.py"]

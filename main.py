@@ -7,7 +7,7 @@ import toml
 import time
 import threading
 from asktable import AskTable
-from .system import gather_system_info
+from system import gather_system_info
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
