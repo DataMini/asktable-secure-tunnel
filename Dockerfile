@@ -31,6 +31,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py /app/main.py
 COPY system.py /app/system.py
 
+ENV TZ=Asia/Shanghai
 
 # 设置入口点
 ENTRYPOINT ["python", "main.py"]
