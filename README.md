@@ -13,7 +13,7 @@ AskTable Secure Tunnel (ATST) 是 [AskTable](https://asktable.com) 团队开发�
 部署 ATST 非常简单，首先请按照如下要求准备一台服务器，然后执行一个Docker命令即可。
 
 服务器要求：
-1. 网络方面：确保 ATST 服务器可以访问 AskTable 服务和您的数据源。
+1. 网络方面：确保这台服务器可以访问 AskTable(https://api.asktable.com/) 和您的数据库。
 2. 操作系统：Linux 或 macOS（M1/M2 ARM）
 3. 处理器架构：x86 或 ARM
 4. 运行环境：请确保您的服务器上已经安装了 Docker。
@@ -40,11 +40,12 @@ docker pull datamini/asktable-secure-tunnel
 
 2. 启动 ATST 服务：
     ```bash
-    docker run  -e ASKTABLE_TOKEN=<asktable_token> \
+    docker run -P -e ASKTABLE_TOKEN=<asktable_token> \
         [-e SECURETUNNEL_ID=<securetunnel_id>] datamini/asktable-secure-tunnel
     ```
-  - 如果环境变量中包含`securetunnel_id`，使用该ID启动。（推荐）
-  - 如果环境变量中不包含`securetunnel_id`，自动创建一个ID并启动。（不推荐，因为每次启动都会生成一个新的ID，绑定原ID的数据源将无法访问）
+说明：
+ - 参数 `SECURETUNNEL_ID`：用于启动 ATST 的 唯一ID。若未指定，则自动创建一个。为了避免已经绑定的数据源无法访问，强烈建议您在启动 ATST 时指定该参数。
+ - 端口 `1260`：ATST 内置了一个Web监控页面，以1260端口运行，您可以在 `Docker` 运行时添加 `-P` 或 `-p` 参数将端口暴露出来，以便于通过浏览器访问该监控页面。
 
 启动后，ATST 将自动从 AskTable 获取配置信息并开始运行，同时定期自动更新。一个 ATST 可以共享给多个数据源使用。
 
@@ -85,12 +86,15 @@ at.datasources.register(
 您可以通过Python SDK 或命令行工具 `asktable` 来获取 ATST 信息。详见：https://pypi.org/project/asktable/
 
 
-
 ## 6. 安全和隐私
 保持您的 `asktable_token`和`securetunnel_id` 安全是极其重要的。不要在不安全的地方存储或共享这些信息，以避免未授权访问您的数据源。
 
 ## 7. 故障排除
-若 ATST 服务遇到任何问题，首先请检查 `asktable_token`和`securetunnel_id` 是否正确无误，确保您的网络环境允许 ATST 正常访问您的数据源以及 AskTable 服务。如有更多技术问题，请联系 AskTable 技术支持。
+若 ATST 服务遇到任何问题，首先请检查 `asktable_token`和`securetunnel_id` 是否正确无误，确保您的网络环境允许 ATST 正常访问您的数据库以及 AskTable。
+
+您也可以使用浏览器打开内置的监控页面查看更多信息和配置。
+
+如有更多技术问题，请联系 AskTable 技术支持。
 
 ## 8. FAQ
 

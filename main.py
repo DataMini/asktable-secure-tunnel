@@ -29,10 +29,11 @@ def create_id():
 def generate_config_and_send_client_info(st_id):
     st = at.securetunnels.get(st_id)
     config = {
-        "common": {
-            "server_addr": st.atst_server_host,
-            "server_port": st.atst_server_port,
-            "webServer.port": 7703,
+        "serverAddr": st.atst_server_host,
+        "serverPort": st.atst_server_port,
+        "webServer": {
+            "port": 1260,
+            "addr": "0.0.0.0",
         },
         "proxies": []
     }
@@ -53,10 +54,11 @@ def generate_config_and_send_client_info(st_id):
 
 def generate_config_toml(config, config_path):
     """
-    [common]
-    server_addr = 10.10.10.10
-    server_port = 7000
-    webServer.port = 7703
+    serverAddr = 10.10.10.10
+    serverPort = 7000
+
+    [webServer]
+    port = 7703
 
     [[proxies]]
     name = "mysql-tcp1"

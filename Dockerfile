@@ -33,6 +33,8 @@ COPY system.py /app/system.py
 
 ENV TZ=Asia/Shanghai
 
+EXPOSE 1260
+
 # 设置入口点
 ENTRYPOINT ["python", "main.py"]
 
