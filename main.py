@@ -41,9 +41,9 @@ def generate_config_and_send_client_info(st_id):
         proxy = {
             "name": link.id,
             "type": "tcp",
-            "local_ip": link.target_host,
-            "local_port": link.target_port,
-            "remote_port": link.proxy_port
+            "localIP": link.target_host,
+            "localPort": link.target_port,
+            "remotePort": link.proxy_port
         }
         config["proxies"].append(proxy)
 
@@ -63,16 +63,16 @@ def generate_config_toml(config, config_path):
     [[proxies]]
     name = "mysql-tcp1"
     type = "tcp"
-    local_ip = "10.1.1.3"
-    local_port = 3306
-    remote_port = 6000
+    localIP = "10.1.1.3"
+    localPort = 3306
+    remotePort = 6000
 
     [[proxies]]
     name = "mysql-tcp2"
     type = "tcp"
-    local_ip = "10.2.2.3"
-    local_port = 3306
-    remote_port = 6002
+    localIP = "10.2.2.3"
+    localPort = 3306
+    remotePort = 6002
     """
     try:
         with open(config_path, 'w') as file:

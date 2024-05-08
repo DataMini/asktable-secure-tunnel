@@ -40,7 +40,7 @@ docker pull datamini/asktable-secure-tunnel
 
 2. 启动 ATST 服务：
     ```bash
-    docker run -P -e ASKTABLE_TOKEN=<asktable_token> \
+    docker run -d -P -e ASKTABLE_TOKEN=<asktable_token> \
         [-e SECURETUNNEL_ID=<securetunnel_id>] datamini/asktable-secure-tunnel
     ```
 说明：
