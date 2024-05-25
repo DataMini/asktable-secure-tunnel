@@ -37,7 +37,7 @@ docker pull datamini/asktable-secure-tunnel
     ```bash
     docker run --rm -e ASKTABLE_TOKEN=<asktable_token> datamini/asktable-secure-tunnel create-id
     ```
-  此命令将返回一个 `securetunnel_id`，请妥善保存此 ID，因为它是获取您当前 ATST 配置信息的唯一凭证。
+  此命令将返回一个 `securetunnel_id`，请妥善保存此 ID，因为它是您当前 ATST 的唯一标识。
   
 
 2. 启动 ATST 服务：
