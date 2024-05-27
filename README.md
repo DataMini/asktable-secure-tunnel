@@ -63,7 +63,7 @@ docker pull datamini/asktable-secure-tunnel
 from asktable import AskTable
 at = AskTable()
 at.datasources.register(
-    type='mysql', 
+    engine='mysql', 
     access_config={
         'host': '10.1.2.3', 'port': 3306, 'user': 'xx', 'password': 'xx', 
         'securetunnel_id': 'xxx'
