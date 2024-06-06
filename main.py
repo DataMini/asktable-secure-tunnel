@@ -48,7 +48,7 @@ def generate_config_and_send_client_info(st_id):
         config["proxies"].append(proxy)
 
     info = gather_system_info()
-    st.update(name=info['hostname'], client_info=info)
+    st.update(unique_key=info['hostname'], client_info=info)
     return config
 
 
