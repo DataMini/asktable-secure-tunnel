@@ -104,7 +104,6 @@ def monitor_config_and_reload_frpc(
 
 
 def start_atst(st_id):
-    logging.info(f"Starting ATST with Secure Tunnel ID: {st_id}")
     config_path = "/etc/frpc.toml"
     try:
         current_config = generate_config_and_send_client_info(st_id)
@@ -143,4 +142,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    x = generate_config_and_send_client_info('atst_cWTVwWmqHTn2R7T9bBtLJ')
+    print(x)
+
