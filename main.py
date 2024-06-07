@@ -142,7 +142,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    x = generate_config_and_send_client_info('atst_cWTVwWmqHTn2R7T9bBtLJ')
-    print(x)
+    main()
 
