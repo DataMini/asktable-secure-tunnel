@@ -108,7 +108,7 @@ def start_atst(st_id):
     try:
         current_config = generate_config_and_send_client_info(st_id)
     except asktable.exceptions.ServerConnectionError:
-        logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.")
+        logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.", exc_info=True)
         sys.exit(1)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
