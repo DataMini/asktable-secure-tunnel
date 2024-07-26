@@ -11,7 +11,7 @@ from system import gather_system_info
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-at_api_url = os.getenv('ASKTABLE_API_URL', 'https://api.asktable.com')
+at_api_url = os.getenv('ASKTABLE_API_URL', 'https://api.asktable.com/v1')
 at_token = os.getenv('ASKTABLE_TOKEN')
 if not at_token:
     logging.error("Missing ASKTABLE_TOKEN")
@@ -125,6 +125,8 @@ def start_atst(st_id):
 
 
 def main():
+    masked_token = at_token[:4] + "*" * (len(at_token) - 8) + at_token[-4:]
+    logging.info(f"Starting ATST Client with AskTable Token {masked_token}")
     if len(sys.argv) > 1 and sys.argv[1] == "create-id":
         create_id()
     else:
