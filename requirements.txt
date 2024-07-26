@@ -1,4 +1,4 @@
-asktable==0.17.7
+asktable==0.20.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
 idna==3.7
