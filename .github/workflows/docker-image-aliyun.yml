@@ -1,0 +1,34 @@
+name: Image To Aliyun
+
+on:
+  create:
+    tags:
+      - '*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Aliyun Docker Registry
+        run: echo ${{ secrets.ALIYUN_DOCKER_REGISTRY_PASSWORD }} | docker login --username=${{ secrets.ALIYUN_DOCKER_REGISTRY_USER }} --password-stdin registry.cn-shanghai.aliyuncs.com
+
+      - name: Get the version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5.0.0
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            registry.cn-shanghai.aliyuncs.com/datamini/asktable-secure-tunnel:${{ env.VERSION }}
+            registry.cn-shanghai.aliyuncs.com/datamini/asktable-secure-tunnel:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7

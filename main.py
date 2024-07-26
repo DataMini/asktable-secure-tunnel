@@ -48,7 +48,7 @@ def generate_config_and_send_client_info(st_id):
         config["proxies"].append(proxy)
 
     info = gather_system_info()
-    st.update(name=info['hostname'], client_info=info)
+    st.update(unique_key=info['hostname'], client_info=info)
     return config
 
 
@@ -104,12 +104,11 @@ def monitor_config_and_reload_frpc(
 
 
 def start_atst(st_id):
-    logging.info(f"Starting ATST with Secure Tunnel ID: {st_id}")
     config_path = "/etc/frpc.toml"
     try:
         current_config = generate_config_and_send_client_info(st_id)
     except asktable.exceptions.ServerConnectionError:
-        logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.")
+        logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.", exc_info=True)
         sys.exit(1)
     generate_config_toml(current_config, config_path)
     # Start monitoring in a separate thread
@@ -146,3 +145,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

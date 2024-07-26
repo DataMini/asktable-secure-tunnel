@@ -4,7 +4,7 @@ import psutil
 from datetime import datetime
 
 
-def gather_system_info():
+def gather_system_info() -> dict:
     # 创建一个字典来保存信息
     info = {
         'os': platform.system(),

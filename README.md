@@ -33,27 +33,26 @@ docker pull datamini/asktable-secure-tunnel
 启动 ATST 服务前，您需要一个唯一的 `Secure Tunnel ID(securetunnel_id)`来标识和启动您的 ATST：
 
 1. 创建 `securetunnel_id`：
+   其中 `<asktable_token>` 是AskTable分配给您的Token，可联系 `contact@datamini.ai` 获取。
     ```bash
     docker run --rm -e ASKTABLE_TOKEN=<asktable_token> datamini/asktable-secure-tunnel create-id
     ```
-  此命令将返回一个 `securetunnel_id`，请妥善保存此 ID，因为它是获取您当前 ATST 配置信息的唯一凭证。
+  此命令将返回一个 `securetunnel_id`，请妥善保存此 ID，因为它是您当前 ATST 的唯一标识。
+  
 
 2. 启动 ATST 服务：
     ```bash
-    docker run -d -P -e ASKTABLE_TOKEN=<asktable_token> \
-        [-e SECURETUNNEL_ID=<securetunnel_id>] datamini/asktable-secure-tunnel
+    docker run -d -P -e ASKTABLE_TOKEN=<asktable_token> -e SECURETUNNEL_ID=<securetunnel_id> datamini/asktable-secure-tunnel
     ```
 说明：
- - 参数 `SECURETUNNEL_ID`：用于启动 ATST 的 唯一ID。若未指定，则自动创建一个。为了避免已经绑定的数据源无法访问，强烈建议您在启动 ATST 时指定该参数。
+ - ASKTABLE_TOKEN： AskTable 服务的 API Token。
+ - 参数 `-e SECURETUNNEL_ID=<securetunnel_id>` 可选：用于指定当前 ATST 的 ID。若未指定，则自动创建一个，但不建议这样，因为一旦重启，可能会影响数据通信。
  - 端口 `1260`：ATST 内置了一个Web监控页面，以1260端口运行，您可以在 `Docker` 运行时添加 `-P` 或 `-p` 参数将端口暴露出来，以便于通过浏览器访问该监控页面。
 
 启动后，ATST 将自动从 AskTable 获取配置信息并开始运行，同时定期自动更新。一个 ATST 可以共享给多个数据源使用。
 
 ### 2.3 环境变量配置
 
-- ASKTABLE_API_URL： AskTable 服务的 API 地址，默认为 `https://api.asktable.com`，无需更改。
-- ASKTABLE_TOKEN： AskTable 服务的 API Token，从[AskTable网站](https://asktable.com)获取。
-- SECURETUNNEL_ID： ATST 的唯一标识。
 
 
 ## 3. 注册数据源
@@ -64,7 +63,7 @@ docker pull datamini/asktable-secure-tunnel
 from asktable import AskTable
 at = AskTable()
 at.datasources.register(
-    type='mysql', 
+    engine='mysql', 
     access_config={
         'host': '10.1.2.3', 'port': 3306, 'user': 'xx', 'password': 'xx', 
         'securetunnel_id': 'xxx'
