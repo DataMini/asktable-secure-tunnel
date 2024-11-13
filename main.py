@@ -17,7 +17,7 @@ if not at_api_key:
     logging.error("Missing ASKTABLE_API_KEY")
     sys.exit(1)
 
-at = Asktable(api_key=at_api_key, api_url=at_api_url)
+at = Asktable(api_key=at_api_key, base_url=at_api_url)
 
 
 def create_id():
