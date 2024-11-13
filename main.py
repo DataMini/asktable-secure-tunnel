@@ -2,22 +2,22 @@ import os
 import sys
 import subprocess
 import logging
-import asktable.exceptions
 import toml
 import time
 import threading
-from asktable import AskTable
+import asktable
+from asktable import Asktable
 from system import gather_system_info
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-at_api_url = os.getenv('ASKTABLE_API_URL', 'https://api.asktable.com/v1')
-at_token = os.getenv('ASKTABLE_TOKEN')
-if not at_token:
-    logging.error("Missing ASKTABLE_TOKEN")
+at_api_url = os.getenv('API_URL', 'https://api.asktable.com/v1')
+at_api_key = os.getenv('API_KEY')
+if not at_api_key:
+    logging.error("Missing ASKTABLE_API_KEY")
     sys.exit(1)
 
-at = AskTable(token=at_token, api_url=at_api_url)
+at = Asktable(api_key=at_api_key, api_url=at_api_url)
 
 
 def create_id():
@@ -37,7 +37,8 @@ def generate_config_and_send_client_info(st_id):
         },
         "proxies": []
     }
-    for link in st.links:
+    links = at.securetunnels.links.list(st_id)
+    for link in links:
         proxy = {
             "name": link.id,
             "type": "tcp",
@@ -87,12 +88,12 @@ def monitor_config_and_reload_frpc(
     while True:
         try:
             current_config = generate_config_and_send_client_info(st_id)
-        except asktable.exceptions.ServerConnectionError:
+        except asktable.APIConnectionError:
             logging.error("Failed to connect to the server. Retrying in 10 seconds.")
             time.sleep(10)
             continue
-        except (asktable.exceptions.UnknownServerError, asktable.exceptions.UnknownError) as e:
-            logging.error(f"Failed to get the configuration: {e}. Retrying in 10 seconds.")
+        except asktable.APIStatusError as e:
+            logging.error(f"Another non-200-range status code was received: {e}. Retrying in 10 seconds.")
             time.sleep(10)
             continue
         if current_config != previous_config:
@@ -107,7 +108,7 @@ def start_atst(st_id):
     config_path = "/etc/frpc.toml"
     try:
         current_config = generate_config_and_send_client_info(st_id)
-    except asktable.exceptions.ServerConnectionError:
+    except asktable.APIConnectionError:
         logging.error(f"Failed to connect to the AskTable Server: {at_api_url}. Exiting.", exc_info=True)
         sys.exit(1)
     generate_config_toml(current_config, config_path)
@@ -124,23 +125,21 @@ def start_atst(st_id):
 
 
 def main():
-    masked_token = at_token[:4] + "*" * (len(at_token) - 8) + at_token[-4:]
-    logging.info(f"Starting ATST Client with AskTable Token {masked_token}")
+    masked_api_key = at_api_key[:4] + "*" * (len(at_api_key) - 8) + at_api_key[-4:]
+    logging.info(f"Starting ATST Client with AskTable API Key {masked_api_key}")
     if len(sys.argv) > 1 and sys.argv[1] == "create-id":
         create_id()
     else:
-        st_id = os.getenv('SECURETUNNEL_ID')
-
+        st_id = os.getenv('ATST_ID')
         if st_id:
             logging.info(f"Using provided Secure Tunnel ID({st_id}) for starting ATST.")
             try:
                 start_atst(st_id)
-            except asktable.exceptions.SecureTunnelNotFound:
+            except asktable.NotFoundError:
                 logging.error(f"Secure Tunnel ID({st_id}) not found. Exiting.")
         else:
-            logging.info(f"Secure Tunnel ID not provided. Creating a new one.")
-            st_id = create_id()
-            start_atst(st_id)
+            logging.error("ATST_ID not provided. Exiting.")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
