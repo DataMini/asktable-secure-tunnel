@@ -49,7 +49,11 @@ def generate_config_and_send_client_info(st_id):
         config["proxies"].append(proxy)
 
     info = gather_system_info()
-    at.securetunnels.update(st.id, unique_key=info['hostname'], client_info=info)
+    if st.unique_key != info['hostname'] or st.client_info != info:
+        logging.info(f"Updating Secure Tunnel ID({st_id}) with new client info")
+        at.securetunnels.update(st.id, unique_key=info['hostname'], client_info=info)
+    else:
+        logging.info(f"Secure Tunnel ID({st_id}) already has the latest client info")
     return config
 
 
