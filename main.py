@@ -27,7 +27,7 @@ def create_id():
 
 
 def generate_config_and_send_client_info(st_id):
-    st = at.securetunnels.get(st_id)
+    st = at.securetunnels.retrieve(st_id)
     config = {
         "serverAddr": st.atst_server_host,
         "serverPort": st.atst_server_port,
@@ -38,7 +38,7 @@ def generate_config_and_send_client_info(st_id):
         "proxies": []
     }
     links = at.securetunnels.links.list(st_id)
-    for link in links:
+    for link in links.items:
         proxy = {
             "name": link.id,
             "type": "tcp",
