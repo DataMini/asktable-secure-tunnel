@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 at_api_url = os.getenv('API_URL', 'https://api.asktable.com/v1')
 at_api_key = os.getenv('API_KEY')
 if not at_api_key:
-    logging.error("Missing ASKTABLE_API_KEY")
+    logging.error("Missing API_KEY")
     sys.exit(1)
 
 at = Asktable(api_key=at_api_key, base_url=at_api_url)
