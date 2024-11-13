@@ -2,7 +2,7 @@
 FROM python:3.11
 
 # 安装基础工具
-RUN apt-get update && apt-get install -y vim curl && apt-get clean
+RUN apt-get update && apt-get install -y vim curl telnet && apt-get clean
 
 # 安装FRP客户端
 ARG FRPC_VERSION=0.52.3
